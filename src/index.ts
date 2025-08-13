@@ -31,10 +31,10 @@ function initializePrisma(): void {
 // Load JWT keys (unused)
 // function loadJWTKeys(): { privateKey: string; publicKey: string } {
 //   const keysPath = path.join(process.cwd(), 'keys');
-// 
+//
 //   let privateKey = process.env.JWT_PRIVATE_KEY;
 //   let publicKey = process.env.JWT_PUBLIC_KEY;
-// 
+//
 //   if (!privateKey || !publicKey) {
 //     try {
 //       privateKey = fs.readFileSync(
@@ -52,7 +52,7 @@ function initializePrisma(): void {
 //       process.exit(1);
 //     }
 //   }
-// 
+//
 //   return { privateKey, publicKey };
 // }
 
@@ -68,7 +68,7 @@ function initializePrisma(): void {
 //       '⚠️ Role tree configuration not found, using empty configuration'
 //     );
 //   }
-// 
+//
 //   return {
 //     path: '/',
 //     children: [],
@@ -265,7 +265,7 @@ async function main(): Promise<void> {
     const app = createApp();
 
     // Get port from environment
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 8080;
 
     if (isNaN(Number(PORT))) {
       throw new Error(`Invalid PORT value: ${PORT}`);
