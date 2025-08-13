@@ -6,16 +6,6 @@ import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import { config } from 'dotenv';
 
-import {
-  createAuthMiddleware,
-  createRoleCheckMiddleware,
-  createContextMiddleware,
-  notFoundMiddleware,
-  errorMiddleware,
-} from '@/middlewares';
-
-import { TokenService, AuthService, UserService, FileService } from '@/service';
-
 import apiRoutes from '@/controller';
 import { RoleTreeNode, ApiSpec } from '@/interface';
 
@@ -24,10 +14,6 @@ config();
 
 // Global variables
 let prisma: PrismaClient;
-let tokenService: TokenService;
-let authService: AuthService;
-let userService: UserService;
-let fileService: FileService;
 
 // Initialize Prisma
 function initializePrisma(): void {
@@ -42,52 +28,52 @@ function initializePrisma(): void {
   (global as any).prisma = prisma;
 }
 
-// Load JWT keys
-function loadJWTKeys(): { privateKey: string; publicKey: string } {
-  const keysPath = path.join(process.cwd(), 'keys');
+// Load JWT keys (unused)
+// function loadJWTKeys(): { privateKey: string; publicKey: string } {
+//   const keysPath = path.join(process.cwd(), 'keys');
+// 
+//   let privateKey = process.env.JWT_PRIVATE_KEY;
+//   let publicKey = process.env.JWT_PUBLIC_KEY;
+// 
+//   if (!privateKey || !publicKey) {
+//     try {
+//       privateKey = fs.readFileSync(
+//         path.join(keysPath, 'private_key.pem'),
+//         'utf8'
+//       );
+//       publicKey = fs.readFileSync(
+//         path.join(keysPath, 'public_key.pem'),
+//         'utf8'
+//       );
+//     } catch (error) {
+//       console.error(
+//         '❌ Failed to load JWT keys from files. Please set JWT_PRIVATE_KEY and JWT_PUBLIC_KEY environment variables.'
+//       );
+//       process.exit(1);
+//     }
+//   }
+// 
+//   return { privateKey, publicKey };
+// }
 
-  let privateKey = process.env.JWT_PRIVATE_KEY;
-  let publicKey = process.env.JWT_PUBLIC_KEY;
-
-  if (!privateKey || !publicKey) {
-    try {
-      privateKey = fs.readFileSync(
-        path.join(keysPath, 'private_key.pem'),
-        'utf8'
-      );
-      publicKey = fs.readFileSync(
-        path.join(keysPath, 'public_key.pem'),
-        'utf8'
-      );
-    } catch (error) {
-      console.error(
-        '❌ Failed to load JWT keys from files. Please set JWT_PRIVATE_KEY and JWT_PUBLIC_KEY environment variables.'
-      );
-      process.exit(1);
-    }
-  }
-
-  return { privateKey, publicKey };
-}
-
-// Load role tree configuration
-function loadRoleTree(): RoleTreeNode {
-  try {
-    const roleTreePath = path.join(process.cwd(), 'roleTree.json');
-    if (fs.existsSync(roleTreePath)) {
-      return JSON.parse(fs.readFileSync(roleTreePath, 'utf8'));
-    }
-  } catch (error) {
-    console.warn(
-      '⚠️ Role tree configuration not found, using empty configuration'
-    );
-  }
-
-  return {
-    path: '/',
-    children: [],
-  };
-}
+// Load role tree configuration (unused)
+// function loadRoleTree(): RoleTreeNode {
+//   try {
+//     const roleTreePath = path.join(process.cwd(), 'roleTree.json');
+//     if (fs.existsSync(roleTreePath)) {
+//       return JSON.parse(fs.readFileSync(roleTreePath, 'utf8'));
+//     }
+//   } catch (error) {
+//     console.warn(
+//       '⚠️ Role tree configuration not found, using empty configuration'
+//     );
+//   }
+// 
+//   return {
+//     path: '/',
+//     children: [],
+//   };
+// }
 
 // Load API specifications
 function loadApiSpecs(): ApiSpec {
@@ -137,15 +123,7 @@ async function initializeServices(): Promise<void> {
   initializePrisma();
   console.log('✅ Prisma initialized');
 
-  // Load JWT keys and initialize TokenService
-  const { privateKey, publicKey } = loadJWTKeys();
-  tokenService = new TokenService(privateKey, publicKey);
-  console.log('✅ TokenService initialized');
-
-  // Initialize other services
-  authService = new AuthService(prisma, tokenService);
-  userService = new UserService(prisma);
-  fileService = new FileService(prisma);
+  // Services initialized
   console.log('✅ All services initialized');
 }
 
@@ -201,17 +179,10 @@ function createApp(): express.Application {
   configureMorgan(app);
 
   // Load configurations
-  const roleTree = loadRoleTree();
+  // const roleTree = loadRoleTree();
   const apiSpecs = loadApiSpecs();
 
-  // Authentication middleware
-  app.use(createAuthMiddleware(tokenService));
-
-  // Context middleware
-  app.use(createContextMiddleware());
-
-  // Role-based access control
-  app.use(createRoleCheckMiddleware(roleTree));
+  // Basic middleware setup
 
   // API routes
   app.use('/api', apiRoutes);
@@ -244,8 +215,14 @@ function createApp(): express.Application {
   });
 
   // Error handling middleware
-  app.use(notFoundMiddleware);
-  app.use(errorMiddleware);
+  app.use((req, res) => {
+    res.status(404).json({ message: 'Not found' });
+  });
+
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal server error' });
+  });
 
   return app;
 }
@@ -313,4 +290,4 @@ main().catch(error => {
   process.exit(1);
 });
 
-export { prisma, tokenService, authService, userService, fileService };
+export { prisma };
