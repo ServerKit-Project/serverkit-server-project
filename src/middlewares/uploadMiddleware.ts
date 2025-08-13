@@ -3,7 +3,11 @@ import { Request } from 'express';
 
 const storage = multer.memoryStorage();
 
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   const allowedMimes = [
     'image/jpeg',
     'image/png',
@@ -14,7 +18,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
     'application/json',
     'text/csv',
     'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   ];
 
   if (allowedMimes.includes(file.mimetype)) {
@@ -28,16 +32,16 @@ const upload = multer({
   storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB
-    files: 5
+    files: 5,
   },
-  fileFilter
+  fileFilter,
 });
 
 export const uploadSingle = upload.single('file');
 export const uploadMultiple = upload.array('files', 5);
 export const uploadFields = upload.fields([
   { name: 'avatar', maxCount: 1 },
-  { name: 'gallery', maxCount: 5 }
+  { name: 'gallery', maxCount: 5 },
 ]);
 
 export { upload as uploadMiddleware };

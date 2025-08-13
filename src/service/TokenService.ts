@@ -15,7 +15,7 @@ export class TokenService {
       algorithm: 'RS256' as const,
       expiresIn: '1h',
       issuer: 'serverkit-server',
-      audience: 'serverkit-client'
+      audience: 'serverkit-client',
     };
 
     const finalOptions = { ...defaultOptions, ...options };
@@ -28,7 +28,7 @@ export class TokenService {
       const decoded = jwt.verify(token, this.publicKey, {
         algorithms: ['RS256'],
         issuer: 'serverkit-server',
-        audience: 'serverkit-client'
+        audience: 'serverkit-client',
       });
 
       if (typeof decoded === 'string') {

@@ -9,7 +9,7 @@ export class FileRepository extends BaseRepository {
 
   async findById(id: string): Promise<FileInfo | null> {
     return this.prisma.fileInfo.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -21,26 +21,29 @@ export class FileRepository extends BaseRepository {
     originalname: string;
   }): Promise<FileInfo> {
     return this.prisma.fileInfo.create({
-      data
+      data,
     });
   }
 
-  async update(id: string, data: Partial<{
-    size: number;
-    filename: string;
-    mimetype: string;
-    filePath: string;
-    originalname: string;
-  }>): Promise<FileInfo> {
+  async update(
+    id: string,
+    data: Partial<{
+      size: number;
+      filename: string;
+      mimetype: string;
+      filePath: string;
+      originalname: string;
+    }>
+  ): Promise<FileInfo> {
     return this.prisma.fileInfo.update({
       where: { id },
-      data
+      data,
     });
   }
 
   async delete(id: string): Promise<void> {
     await this.prisma.fileInfo.delete({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -49,8 +52,8 @@ export class FileRepository extends BaseRepository {
       take: limit,
       skip: offset,
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -58,12 +61,12 @@ export class FileRepository extends BaseRepository {
     return this.prisma.fileInfo.findMany({
       where: {
         mimetype: {
-          contains: mimetype
-        }
+          contains: mimetype,
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
   }
 }

@@ -2,7 +2,14 @@ import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { UserRepository } from '@/repository';
 import { TokenService } from './TokenService';
-import { UserPayload, SessionData, AuthError, CredentialPlatform, CredentialProvider, IdentityStatus } from '@/interface';
+import {
+  UserPayload,
+  SessionData,
+  AuthError,
+  CredentialPlatform,
+  CredentialProvider,
+  IdentityStatus,
+} from '@/interface';
 
 export class AuthService {
   private userRepository: UserRepository;
@@ -38,13 +45,13 @@ export class AuthService {
     } = {
       email: data.email,
       status: IdentityStatus.active,
-      userMetadata: {}
+      userMetadata: {},
     };
-    
+
     if (data.displayName) {
       createUserData.displayName = data.displayName;
     }
-    
+
     const user = await this.userRepository.create(createUserData);
 
     await this.userRepository.createCredential({
@@ -52,14 +59,14 @@ export class AuthService {
       platform: data.platform,
       provider: CredentialProvider.ID_PASSWORD,
       providerUserId: data.email,
-      passwordHash: hashedPassword
+      passwordHash: hashedPassword,
     });
 
     const userPayload: UserPayload = {
       id: user.id,
       authAssetId: data.authAssetId,
       roleIds: [],
-      roleNames: []
+      roleNames: [],
     };
 
     const accessToken = this.tokenService.generateAccessToken(userPayload);
@@ -68,7 +75,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: userPayload
+      user: userPayload,
     };
   }
 
@@ -94,7 +101,9 @@ export class AuthService {
     }
 
     const credential = user.credentials.find(
-      (c: any) => c.provider === CredentialProvider.ID_PASSWORD && c.platform === data.platform
+      (c: any) =>
+        c.provider === CredentialProvider.ID_PASSWORD &&
+        c.platform === data.platform
     );
 
     if (!credential || !credential.passwordHash) {
@@ -104,7 +113,10 @@ export class AuthService {
       throw error;
     }
 
-    const isValidPassword = await bcrypt.compare(data.password, credential.passwordHash);
+    const isValidPassword = await bcrypt.compare(
+      data.password,
+      credential.passwordHash
+    );
     if (!isValidPassword) {
       const error = new Error('Invalid credentials') as AuthError;
       error.code = 'INVALID_CREDENTIALS';
@@ -119,7 +131,7 @@ export class AuthService {
       id: user.id,
       authAssetId: data.authAssetId,
       roleIds,
-      roleNames
+      roleNames,
     };
 
     const accessToken = this.tokenService.generateAccessToken(userPayload);
@@ -128,14 +140,14 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: userPayload
+      user: userPayload,
     };
   }
 
   async refreshToken(refreshToken: string): Promise<SessionData> {
     try {
       const payload = this.tokenService.verifyToken(refreshToken);
-      
+
       const user = await this.userRepository.findById(payload.id);
       if (!user || user.status !== IdentityStatus.active) {
         const error = new Error('User not found or inactive') as AuthError;
@@ -151,16 +163,17 @@ export class AuthService {
         id: user.id,
         authAssetId: payload.authAssetId,
         roleIds,
-        roleNames
+        roleNames,
       };
 
       const newAccessToken = this.tokenService.generateAccessToken(userPayload);
-      const newRefreshToken = this.tokenService.generateRefreshToken(userPayload);
+      const newRefreshToken =
+        this.tokenService.generateRefreshToken(userPayload);
 
       return {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
-        user: userPayload
+        user: userPayload,
       };
     } catch (error) {
       const authError = new Error('Invalid refresh token') as AuthError;
@@ -187,7 +200,7 @@ export class AuthService {
       id: user.id,
       authAssetId: user.identityRoles[0]?.role.authAssetId || '',
       roleIds,
-      roleNames
+      roleNames,
     };
   }
 }

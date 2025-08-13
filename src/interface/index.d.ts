@@ -1,5 +1,14 @@
 import { Request } from 'express';
-import { Role, Identity, Credential, IdentityRole, FileInfo, CredentialPlatform, CredentialProvider, IdentityStatus } from '@prisma/client';
+import {
+  Role,
+  Identity,
+  Credential,
+  IdentityRole,
+  FileInfo,
+  CredentialPlatform,
+  CredentialProvider,
+  IdentityStatus,
+} from '@prisma/client';
 
 declare global {
   namespace Express {
@@ -93,5 +102,5 @@ export {
   FileInfo,
   CredentialPlatform,
   CredentialProvider,
-  IdentityStatus
+  IdentityStatus,
 };

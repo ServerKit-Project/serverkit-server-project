@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { BaseRepository } from './BaseRepository';
-import { Identity, IdentityStatus, CredentialPlatform, CredentialProvider } from '@/interface';
+import {
+  Identity,
+  IdentityStatus,
+  CredentialPlatform,
+  CredentialProvider,
+} from '@/interface';
 
 export class UserRepository extends BaseRepository {
   constructor(prisma: PrismaClient) {
@@ -14,10 +19,10 @@ export class UserRepository extends BaseRepository {
         credentials: true,
         identityRoles: {
           include: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
   }
 
@@ -28,10 +33,10 @@ export class UserRepository extends BaseRepository {
         credentials: true,
         identityRoles: {
           include: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
   }
 
@@ -44,12 +49,12 @@ export class UserRepository extends BaseRepository {
             credentials: true,
             identityRoles: {
               include: {
-                role: true
-              }
-            }
-          }
-        }
-      }
+                role: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return credential?.identity || null;
@@ -67,19 +72,22 @@ export class UserRepository extends BaseRepository {
         credentials: true,
         identityRoles: {
           include: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
   }
 
-  async update(id: number, data: Partial<{
-    displayName: string;
-    email: string;
-    status: IdentityStatus;
-    userMetadata: any;
-  }>): Promise<Identity> {
+  async update(
+    id: number,
+    data: Partial<{
+      displayName: string;
+      email: string;
+      status: IdentityStatus;
+      userMetadata: any;
+    }>
+  ): Promise<Identity> {
     return this.prisma.identity.update({
       where: { id },
       data,
@@ -87,16 +95,16 @@ export class UserRepository extends BaseRepository {
         credentials: true,
         identityRoles: {
           include: {
-            role: true
-          }
-        }
-      }
+            role: true,
+          },
+        },
+      },
     });
   }
 
   async delete(id: number): Promise<void> {
     await this.prisma.identity.delete({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -108,7 +116,7 @@ export class UserRepository extends BaseRepository {
     passwordHash?: string;
   }) {
     return this.prisma.credential.create({
-      data
+      data,
     });
   }
 
@@ -116,8 +124,8 @@ export class UserRepository extends BaseRepository {
     return this.prisma.identityRole.create({
       data: {
         identityId,
-        roleId
-      }
+        roleId,
+      },
     });
   }
 
@@ -126,9 +134,9 @@ export class UserRepository extends BaseRepository {
       where: {
         identityId_roleId: {
           identityId,
-          roleId
-        }
-      }
+          roleId,
+        },
+      },
     });
   }
 }

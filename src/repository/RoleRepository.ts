@@ -13,10 +13,10 @@ export class RoleRepository extends BaseRepository {
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 
@@ -26,10 +26,10 @@ export class RoleRepository extends BaseRepository {
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 
@@ -37,54 +37,54 @@ export class RoleRepository extends BaseRepository {
     return this.prisma.role.findFirst({
       where: {
         name,
-        authAssetId
+        authAssetId,
       },
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 
-  async create(data: {
-    name: string;
-    authAssetId: string;
-  }): Promise<Role> {
+  async create(data: { name: string; authAssetId: string }): Promise<Role> {
     return this.prisma.role.create({
       data,
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 
-  async update(id: string, data: Partial<{
-    name: string;
-    authAssetId: string;
-  }>): Promise<Role> {
+  async update(
+    id: string,
+    data: Partial<{
+      name: string;
+      authAssetId: string;
+    }>
+  ): Promise<Role> {
     return this.prisma.role.update({
       where: { id },
       data,
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 
   async delete(id: string): Promise<void> {
     await this.prisma.role.delete({
-      where: { id }
+      where: { id },
     });
   }
 
@@ -93,10 +93,10 @@ export class RoleRepository extends BaseRepository {
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 
@@ -104,16 +104,16 @@ export class RoleRepository extends BaseRepository {
     return this.prisma.role.findMany({
       where: {
         id: {
-          in: ids
-        }
+          in: ids,
+        },
       },
       include: {
         identityRoles: {
           include: {
-            identity: true
-          }
-        }
-      }
+            identity: true,
+          },
+        },
+      },
     });
   }
 }

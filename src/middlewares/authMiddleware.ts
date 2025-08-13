@@ -21,7 +21,7 @@ export function createAuthMiddleware(tokenService: TokenService) {
         id: decoded.id,
         authAssetId: decoded.authAssetId,
         roleIds: decoded.roleIds,
-        roleNames: decoded.roleNames
+        roleNames: decoded.roleNames,
       };
 
       next();

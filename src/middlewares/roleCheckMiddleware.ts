@@ -19,8 +19,10 @@ export function findRolesByPathAndMethod(
       collectedRoles.push(...currentNode.roles);
     }
 
-    const matchingChild = currentNode.children.find((child) => {
-      const childPath = child.path.startsWith('/') ? child.path.slice(1) : child.path;
+    const matchingChild = currentNode.children.find(child => {
+      const childPath = child.path.startsWith('/')
+        ? child.path.slice(1)
+        : child.path;
       return childPath === segments[i];
     });
 
@@ -35,7 +37,10 @@ export function findRolesByPathAndMethod(
     return { authRoles: [] };
   }
 
-  if (currentNode.method && currentNode.method.toLowerCase() !== targetMethod.toLowerCase()) {
+  if (
+    currentNode.method &&
+    currentNode.method.toLowerCase() !== targetMethod.toLowerCase()
+  ) {
     return { authRoles: [] };
   }
 
@@ -44,17 +49,19 @@ export function findRolesByPathAndMethod(
   }
 
   const authRolesMap: Record<string, string[]> = {};
-  collectedRoles.forEach((role) => {
+  collectedRoles.forEach(role => {
     if (!authRolesMap[role.authId]) {
       authRolesMap[role.authId] = [];
     }
     authRolesMap[role.authId].push(role.roleId);
   });
 
-  const authRoles: AuthRole[] = Object.entries(authRolesMap).map(([authId, roleIds]) => ({
-    authId,
-    roleIds
-  }));
+  const authRoles: AuthRole[] = Object.entries(authRolesMap).map(
+    ([authId, roleIds]) => ({
+      authId,
+      roleIds,
+    })
+  );
 
   return { authRoles };
 }
@@ -62,7 +69,11 @@ export function findRolesByPathAndMethod(
 export function createRoleCheckMiddleware(roleTree: RoleTreeNode) {
   return (req: Request, res: Response, next: NextFunction): void => {
     const user = req.$user;
-    const { authRoles } = findRolesByPathAndMethod(roleTree, req.path, req.method);
+    const { authRoles } = findRolesByPathAndMethod(
+      roleTree,
+      req.path,
+      req.method
+    );
 
     if (authRoles.length === 0) {
       return next();
@@ -73,7 +84,7 @@ export function createRoleCheckMiddleware(roleTree: RoleTreeNode) {
       return;
     }
 
-    const matchingAuth = authRoles.find((ar) => ar.authId === user.authAssetId);
+    const matchingAuth = authRoles.find(ar => ar.authId === user.authAssetId);
 
     if (!matchingAuth) {
       res.status(403).json({ message: 'Forbidden' });
@@ -84,7 +95,11 @@ export function createRoleCheckMiddleware(roleTree: RoleTreeNode) {
       return next();
     }
 
-    if (user.roleIds.some((userRoleId: string) => matchingAuth.roleIds.includes(userRoleId))) {
+    if (
+      user.roleIds.some((userRoleId: string) =>
+        matchingAuth.roleIds.includes(userRoleId)
+      )
+    ) {
       return next();
     }
 

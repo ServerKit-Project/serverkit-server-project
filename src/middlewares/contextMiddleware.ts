@@ -13,7 +13,7 @@ export function createContextMiddleware() {
   return (req: Request, res: Response, next: NextFunction): void => {
     const context: Context = {
       user: req.$user,
-      requestId: req.headers['x-request-id'] as string || generateRequestId()
+      requestId: (req.headers['x-request-id'] as string) || generateRequestId(),
     };
 
     asyncLocalStorage.run(context, () => {

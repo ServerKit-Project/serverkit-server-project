@@ -37,13 +37,15 @@ export class FileService {
       filename,
       mimetype: file.mimetype,
       filePath,
-      originalname: file.originalname
+      originalname: file.originalname,
     });
 
     return fileInfo;
   }
 
-  async getFile(fileId: string): Promise<{ fileInfo: FileInfo; filePath: string } | null> {
+  async getFile(
+    fileId: string
+  ): Promise<{ fileInfo: FileInfo; filePath: string } | null> {
     const fileInfo = await this.fileRepository.findById(fileId);
     if (!fileInfo || !fileInfo.filePath) {
       return null;
@@ -56,7 +58,7 @@ export class FileService {
 
     return {
       fileInfo,
-      filePath: fileInfo.filePath
+      filePath: fileInfo.filePath,
     };
   }
 
@@ -76,7 +78,9 @@ export class FileService {
     await this.fileRepository.delete(fileId);
   }
 
-  async getFileStream(fileId: string): Promise<{ stream: fs.ReadStream; fileInfo: FileInfo } | null> {
+  async getFileStream(
+    fileId: string
+  ): Promise<{ stream: fs.ReadStream; fileInfo: FileInfo } | null> {
     const result = await this.getFile(fileId);
     if (!result) {
       return null;
@@ -85,15 +89,17 @@ export class FileService {
     const stream = fs.createReadStream(result.filePath);
     return {
       stream,
-      fileInfo: result.fileInfo
+      fileInfo: result.fileInfo,
     };
   }
 
-  async listFiles(options: {
-    limit?: number;
-    offset?: number;
-    mimetype?: string;
-  } = {}): Promise<FileInfo[]> {
+  async listFiles(
+    options: {
+      limit?: number;
+      offset?: number;
+      mimetype?: string;
+    } = {}
+  ): Promise<FileInfo[]> {
     if (options.mimetype) {
       return this.fileRepository.findByMimetype(options.mimetype);
     }
@@ -105,9 +111,12 @@ export class FileService {
     return this.fileRepository.findById(fileId);
   }
 
-  async updateFileInfo(fileId: string, data: {
-    originalname?: string;
-  }): Promise<FileInfo> {
+  async updateFileInfo(
+    fileId: string,
+    data: {
+      originalname?: string;
+    }
+  ): Promise<FileInfo> {
     const fileInfo = await this.fileRepository.findById(fileId);
     if (!fileInfo) {
       throw new Error('File not found');

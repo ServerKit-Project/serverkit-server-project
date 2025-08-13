@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthError } from '@/interface';
 
-export function notFoundMiddleware(req: Request, res: Response, next: NextFunction): void {
+export function notFoundMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   const error = new Error(`Not found Route(404): ${req.originalUrl}`) as any;
   error.status = 404;
   next(error);
@@ -14,7 +18,7 @@ export function errorMiddleware(
   next: NextFunction
 ): void {
   console.error(err);
-  
+
   const status = err.status || 500;
   const message = err.message || 'Internal Server Error';
 
@@ -23,7 +27,7 @@ export function errorMiddleware(
     res.status(authError.statusCode).json({
       success: false,
       message: authError.message,
-      code: authError.code
+      code: authError.code,
     });
     return;
   }
@@ -31,6 +35,6 @@ export function errorMiddleware(
   res.status(status).json({
     success: false,
     message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 }

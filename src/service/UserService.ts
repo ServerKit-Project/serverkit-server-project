@@ -19,15 +19,21 @@ export class UserService {
     return this.userRepository.findByEmail(email);
   }
 
-  async updateUser(id: number, data: {
-    displayName?: string;
-    email?: string;
-    userMetadata?: any;
-  }): Promise<Identity> {
+  async updateUser(
+    id: number,
+    data: {
+      displayName?: string;
+      email?: string;
+      userMetadata?: any;
+    }
+  ): Promise<Identity> {
     return this.userRepository.update(id, data);
   }
 
-  async updateUserStatus(id: number, status: IdentityStatus): Promise<Identity> {
+  async updateUserStatus(
+    id: number,
+    status: IdentityStatus
+  ): Promise<Identity> {
     return this.userRepository.update(id, { status });
   }
 
@@ -46,7 +52,9 @@ export class UserService {
       throw new Error('Role not found');
     }
 
-    const existingRole = user.identityRoles.find((ir: any) => ir.roleId === roleId);
+    const existingRole = user.identityRoles.find(
+      (ir: any) => ir.roleId === roleId
+    );
     if (existingRole) {
       throw new Error('User already has this role');
     }
@@ -60,7 +68,9 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    const existingRole = user.identityRoles.find((ir: any) => ir.roleId === roleId);
+    const existingRole = user.identityRoles.find(
+      (ir: any) => ir.roleId === roleId
+    );
     if (!existingRole) {
       throw new Error('User does not have this role');
     }
@@ -68,7 +78,9 @@ export class UserService {
     await this.userRepository.removeRole(userId, roleId);
   }
 
-  async getUserRoles(userId: number): Promise<Array<{ id: string; name: string; authAssetId: string }>> {
+  async getUserRoles(
+    userId: number
+  ): Promise<Array<{ id: string; name: string; authAssetId: string }>> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new Error('User not found');
@@ -77,7 +89,7 @@ export class UserService {
     return user.identityRoles.map((ir: any) => ({
       id: ir.role.id,
       name: ir.role.name,
-      authAssetId: ir.role.authAssetId
+      authAssetId: ir.role.authAssetId,
     }));
   }
 
@@ -101,13 +113,15 @@ export class UserService {
   }
 
   transformToUserPayload(identity: Identity, authAssetId: string): UserPayload {
-    const roles = identity.identityRoles.filter((ir: any) => ir.role.authAssetId === authAssetId);
-    
+    const roles = identity.identityRoles.filter(
+      (ir: any) => ir.role.authAssetId === authAssetId
+    );
+
     return {
       id: identity.id,
       authAssetId,
       roleIds: roles.map((r: any) => r.roleId),
-      roleNames: roles.map((r: any) => r.role.name)
+      roleNames: roles.map((r: any) => r.role.name),
     };
   }
 }
