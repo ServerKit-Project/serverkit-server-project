@@ -214,7 +214,7 @@ function createApp(): express.Application {
   app.use(createRoleCheckMiddleware(roleTree));
 
   // API routes
-  app.use('/api', createRoutes(prisma, authService, userService, fileService));
+  app.use('/api', apiRoutes);
 
   // Health check endpoint
   app.get('/health', (req: express.Request, res: express.Response) => {
