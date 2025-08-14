@@ -8,6 +8,7 @@ import { config } from 'dotenv';
 
 import apiRoutes from '@/controller';
 import { RoleTreeNode, ApiSpec } from '@/interface';
+import apiSpecs from './api-specs.json';
 
 // Load environment variables
 config();
@@ -75,46 +76,6 @@ function initializePrisma(): void {
 //   };
 // }
 
-// Load API specifications
-function loadApiSpecs(): ApiSpec {
-  try {
-    const apiSpecsPath = path.join(process.cwd(), 'api-specs.json');
-    if (fs.existsSync(apiSpecsPath)) {
-      return JSON.parse(fs.readFileSync(apiSpecsPath, 'utf8'));
-    }
-  } catch (error) {
-    console.warn('⚠️ API specs not found, using default configuration');
-  }
-
-  return {
-    version: '1.0.0',
-    endpoints: [
-      {
-        path: '/auth/register',
-        method: 'POST',
-        description: 'Register new user',
-      },
-      { path: '/auth/login', method: 'POST', description: 'User login' },
-      {
-        path: '/auth/refresh',
-        method: 'POST',
-        description: 'Refresh access token',
-      },
-      {
-        path: '/users/me',
-        method: 'GET',
-        description: 'Get current user profile',
-      },
-      {
-        path: '/files/upload',
-        method: 'POST',
-        description: 'Upload single file',
-      },
-      { path: '/files/:id', method: 'GET', description: 'Get file by ID' },
-    ],
-  };
-}
-
 // Initialize all services
 async function initializeServices(): Promise<void> {
   console.log('🚀 Initializing services...');
@@ -180,7 +141,6 @@ function createApp(): express.Application {
 
   // Load configurations
   // const roleTree = loadRoleTree();
-  const apiSpecs = loadApiSpecs();
 
   // Basic middleware setup
 
