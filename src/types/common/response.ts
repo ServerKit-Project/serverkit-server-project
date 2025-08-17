@@ -1,4 +1,4 @@
-export abstract class Response {
+abstract class Response {
   message: 'success' | 'error';
 
   constructor(message: 'success' | 'error') {
@@ -26,13 +26,19 @@ export class PaginationResponse<T> extends Response {
     };
   };
 
-  constructor(
-    list: T[],
-    page: number,
-    pageSize: number,
-    totalPage: number,
-    itemCount: number
-  ) {
+  constructor({
+    list,
+    page,
+    pageSize,
+    totalPage,
+    itemCount
+  }: {
+    list: T[];
+    page: number;
+    pageSize: number;
+    totalPage: number;
+    itemCount: number;
+  }) {
     super('success');
     this.data = {
       list,
