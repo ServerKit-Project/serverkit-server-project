@@ -29,7 +29,8 @@
       "@/repository/*": ["repository/*"],
       "@/service/*": ["service/*"],
       "@/middlewares/*": ["middlewares/*"],
-      "@/controller/*": ["controller/*"]
+      "@/controller/*": ["controller/*"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": [
