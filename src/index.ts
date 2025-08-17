@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import { config } from 'dotenv';
 
 import apiRoutes from '@/controller';
-import { RoleTreeNode, ApiSpec } from '@/interface';
+// import { RoleTreeNode, ApiSpec } from '@/interface';
 import apiSpecs from './api-specs.json';
 
 // Load environment variables
