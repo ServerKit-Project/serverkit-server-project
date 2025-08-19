@@ -7,48 +7,6 @@ datasource db {
   url      = "file:./default.db"
 }
 
-model Role {
-  id            String         @id @default(uuid())
-  name          String
-  authAssetId   String
-  identityRoles IdentityRole[]
-}
-
-model Credential {
-  id             Int                @id @default(autoincrement())
-  identityId     Int
-  identity       Identity           @relation(fields: [identityId], references: [id], onDelete: Cascade)
-  platform       CredentialPlatform
-  provider       CredentialProvider
-  providerUserId String             @unique
-  passwordHash   String?
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-}
-
-model Identity {
-  id            Int            @id @default(autoincrement())
-  displayName   String?
-  email         String?
-  status        IdentityStatus
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  userMetadata  Json
-  identityRoles IdentityRole[]
-  credentials   Credential[]
-}
-
-model IdentityRole {
-  id         Int      @id @default(autoincrement())
-  identityId Int
-  identity   Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
-  roleId     String
-  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  assignedAt DateTime @default(now())
-
-  @@unique([identityId, roleId])
-}
-
 model FileInfo {
   id           String   @id @default(uuid())
   size         Int
@@ -57,19 +15,4 @@ model FileInfo {
   filePath     String?
   originalname String
   createdAt    DateTime @default(now())
-}
-
-enum CredentialPlatform {
-  WEB
-  IOS
-  ANDROID
-}
-
-enum CredentialProvider {
-  ID_PASSWORD
-}
-
-enum IdentityStatus {
-  active
-  inactive
 }
